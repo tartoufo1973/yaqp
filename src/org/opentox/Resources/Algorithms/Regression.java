@@ -715,6 +715,31 @@ public class Regression extends AbstractResource {
                     if (getResponse().getStatus().equals(Status.SUCCESS_OK)) {
                         String model_id = modelPrefix + dataid + "-" + NSVM;
                         getResponse().setEntity(baseURI + "/model/regression/svm/" + model_id+"\n", MediaType.TEXT_PLAIN);
+
+                       StringBuilder xmlstr = new StringBuilder();
+                       xmlstr.append(xmlIntro);
+                       xmlstr.append("<ot:Model xmlns:ot=\"http://opentox.org/1.0/\" " +
+                               "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+                               "xsi:schemaLocation=\"http://opentox.org/1.0/Algorithm.xsd\" " +
+                               "ID=\""+model_id+"\" Name=\"Svm Classification Model\">\n");
+                           xmlstr.append("<ot:link href=\"" + SvcModelURI + "/" + model_id +  "\" />\n");
+                           xmlstr.append("<ot:AlgorithmID href=\"" + SvcAlgorithmURI +  "\"/>\n");
+                           xmlstr.append("<DatasetID href=\"\"/>\n");
+                           xmlstr.append("<AlgorithmParameters>\n");
+                               xmlstr.append("<param name=\"kernel\"  type=\"string\">" + kernel + "</param>\n");
+                               xmlstr.append("<param name=\"cost\"  type=\"double\">" + cost + "</param>\n");
+                               xmlstr.append("<param name=\"epsilon\"  type=\"double\">" + epsilon + "</param>\n");
+                               xmlstr.append("<param name=\"gamma\"  type=\"double\">" + gamma + "</param>\n");
+                               xmlstr.append("<param name=\"coeff0\"  type=\"double\">" + coeff0 + "</param>\n");
+                               xmlstr.append("<param name=\"degree\"  type=\"int\">" + degree + "</param>\n");
+                               xmlstr.append("<param name=\"tolerance\"  type=\"double\">" + tolerance + "</param>\n");
+                               xmlstr.append("<param name=\"cacheSize\"  type=\"double\">" + cacheSize + "</param>\n");
+                           xmlstr.append("</AlgorithmParameters>\n");
+                           xmlstr.append("<FeatureDefinitions>\n");
+                           xmlstr.append("</FeatureDefinitions>\n");
+                           xmlstr.append("<User>Guest</User>\n");
+                           xmlstr.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
+                       xmlstr.append("</ot:Model>\n");
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(Classification.class.getName()).log(Level.SEVERE, null, ex);
