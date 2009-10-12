@@ -35,7 +35,7 @@ import org.restlet.resource.Variant;
  */
 public class Model extends AbstractResource{
 
-    private static final long serialVersionUID = 10012190007003004L;
+    private static final long serialVersionUID = 10012190007003005L;
 
     private String model_id, algorithm_id, model_type;
     
@@ -98,11 +98,12 @@ public class Model extends AbstractResource{
                  * 1.2. Other regression modelsStringRepresentation
                  */
             }else if (algorithm_id.equalsIgnoreCase("svm")){
-                    File SVMmodelFile = new File(REG_SVM_modelsDir+"/"+model_id);
-                    RepresentationFactory model = new RepresentationFactory(SVMmodelFile.getAbsolutePath());
+                    File SVMmodelFile = new File(REG_SVM_modelsDir+"/xml/"+model_id+".xml");
+                    logger.info("Looking for : "+REG_SVM_modelsDir+"/xml/"+model_id+".xml");
+                    RepresentationFactory model = new RepresentationFactory(REG_SVM_modelsDir+"/xml/"+model_id+".xml");
                     try {
                         getResponse().setStatus(Status.SUCCESS_OK);
-                        return new StringRepresentation(model.getString().toString(), MediaType.TEXT_PLAIN);
+                        return new StringRepresentation(model.getString().toString(), MediaType.TEXT_XML);
                     } catch (FileNotFoundException ex) {
                         Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
                         getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);

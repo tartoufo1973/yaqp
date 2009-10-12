@@ -51,7 +51,7 @@ import weka.experiment.LearningRateResultProducer;
  */
 public class Classification extends AbstractResource{
 
-    private static final long serialVersionUID = 7323625622428711L;
+    private static final long serialVersionUID = 7323625622428712L;
 
     /**
      * Algorithm id can be svm, pls, knn, j48.

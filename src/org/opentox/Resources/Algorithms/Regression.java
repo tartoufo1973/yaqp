@@ -55,7 +55,7 @@ import org.opentox.util.svm_train;
  */
 public class Regression extends AbstractResource {
 
-    private static final long serialVersionUID = 10012190006007016L;
+    private static final long serialVersionUID = 10012190006007017L;
     private volatile String algorithmId;
     private int i;
     private double d;
@@ -714,7 +714,7 @@ public class Regression extends AbstractResource {
                      */
                     if (getResponse().getStatus().equals(Status.SUCCESS_OK)) {
                         String model_id = modelPrefix + dataid + "-" + NSVM;
-                        getResponse().setEntity(baseURI + "/model/regression/svm/" + model_id+"\n", MediaType.TEXT_PLAIN);
+                        getResponse().setEntity(SvmModelURI + "/"+ model_id+"\n", MediaType.TEXT_PLAIN);
 
                        StringBuilder xmlstr = new StringBuilder();
                        xmlstr.append(xmlIntro);
@@ -722,8 +722,8 @@ public class Regression extends AbstractResource {
                                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
                                "xsi:schemaLocation=\"http://opentox.org/1.0/Algorithm.xsd\" " +
                                "ID=\""+model_id+"\" Name=\"Svm Classification Model\">\n");
-                           xmlstr.append("<ot:link href=\"" + SvcModelURI + "/" + model_id +  "\" />\n");
-                           xmlstr.append("<ot:AlgorithmID href=\"" + SvcAlgorithmURI +  "\"/>\n");
+                           xmlstr.append("<ot:link href=\"" + SvmModelURI + "/" + model_id +  "\" />\n");
+                           xmlstr.append("<ot:AlgorithmID href=\"" + SvmAlgorithmURI +  "\"/>\n");
                            xmlstr.append("<DatasetID href=\"\"/>\n");
                            xmlstr.append("<AlgorithmParameters>\n");
                                xmlstr.append("<param name=\"kernel\"  type=\"string\">" + kernel + "</param>\n");
@@ -740,6 +740,16 @@ public class Regression extends AbstractResource {
                            xmlstr.append("<User>Guest</User>\n");
                            xmlstr.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
                        xmlstr.append("</ot:Model>\n");
+                       try{
+
+                           FileWriter fstream = new FileWriter(REG_SVM_modelsDir + "/xml/" + model_id + ".xml" );
+                           BufferedWriter out = new BufferedWriter(fstream);
+                           out.write(xmlstr.toString());
+                           out.flush();
+                           out.close();
+                       } catch (Exception e) {
+                           System.err.println("Error: " + e.getMessage());
+                       }
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(Classification.class.getName()).log(Level.SEVERE, null, ex);
