@@ -260,63 +260,74 @@ public class Regression extends AbstractResource {
 
                     // Now, construct the PMML:
                     StringBuilder builder = new StringBuilder();
+                    File mlrModelFolder = new File(REG_MLR_modelsDir);
+                    String[] listOfFiles = mlrModelFolder.list();
+                    int NMLR = listOfFiles.length;
+                    String model_id = new String(modelPrefix + dataid + "-" + NMLR);
                     builder.append(xmlIntro);
-                    builder.append(PMMLIntro);
-                    // DataDictionary:
-                    builder.append("<OpenToxModel id=\"" + baseURI + "/model/regression/mlr/" + dataid + "\" name=\"MlrModel_" + dataid + "\">\n");
-                    builder.append("<AlgorithmID>mlr</AlgorithmID>\n");
-                    /**
-                     * Check this again...
-                     */
-                    builder.append("<DataSetID>/dataset/" + dataid + "</DataSetID>\n");
-                    builder.append("<User>OpenToxUser</User>\n");
-                    builder.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
-                    builder.append("</OpenToxModel>\n");
-                    builder.append("<DataDictionary numberOfFields=\"" + data.numAttributes() + "\" >\n");
-                    for (int k = 0; k <= data.numAttributes() - 1; k++) {
-                        builder.append("<DataField name=\"" +
-                                data.attribute(k).name() +
-                                "\" optype=\"continuous\" dataType=\"double\" />\n");
-                    }
-                    builder.append("</DataDictionary>\n");
-                    // RegressionModel
-                    builder.append("<RegressionModel modelName=\"" + dataid + "\"" +
+                    builder.append("<ot:Model xmlns:ot=\"http://opentox.org/1.0/\" " +
+                               "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+                               "xsi:schemaLocation=\"http://opentox.org/1.0/Algorithm.xsd\" " +
+                               "ID=\"" + model_id + "\" Name=\"MLR Model\">\n");
+                        builder.append("<ot:link href=\"" + ModelURI + "/" + model_id +  "\" />\n");
+                        builder.append("<ot:AlgorithmID href=\"" + MlrAlgorithmURI +  "\"/>\n");
+                        builder.append("<DatasetID href=\"\"/>\n");
+                        builder.append("<AlgorithmParameters />\n");
+                        builder.append("<FeatureDefinitions>\n");
+                        builder.append("</FeatureDefinitions>\n");
+                        builder.append("<User>Guest</User>\n");
+                        builder.append("<Timestamp>" + java.util.GregorianCalendar.getInstance().getTime() + "</Timestamp>\n");
+
+
+                        //beginning of PMML element
+                        builder.append(PMMLIntro);
+
+
+                        builder.append("<DataDictionary numberOfFields=\"" + data.numAttributes() + "\" >\n");
+                        for (int k = 0; k <= data.numAttributes() - 1; k++) {
+                            builder.append("<DataField name=\"" + data.attribute(k).name() + "\" optype=\"continuous\" dataType=\"double\" />\n");
+                        }
+                        builder.append("</DataDictionary>\n");
+                        // RegressionModel
+                        builder.append("<RegressionModel modelName=\"" + dataid + "\"" +
                             " functionName=\"regression\"" +
                             " modelType=\"linearRegression\"" +
                             " algorithmName=\"linearRegression\"" +
                             " targetFieldName=\"" + data.attribute(data.numAttributes() - 1).name() + "\"" +
                             ">\n");
-                    // RegressionModel::MiningSchema
-                    builder.append("<MiningSchema>\n");
-                    for (int k = 0; k <= data.numAttributes() - 2; k++) {
-                        builder.append("<MiningField name=\"" +
+                        // RegressionModel::MiningSchema
+                        builder.append("<MiningSchema>\n");
+                        for (int k = 0; k <= data.numAttributes() - 2; k++) {
+                            builder.append("<MiningField name=\"" +
                                 data.attribute(k).name() + "\" />\n");
-                    }
-                    builder.append("<MiningField name=\"" +
+                        }
+                        builder.append("<MiningField name=\"" +
                             data.attribute(data.numAttributes() - 1).name() + "\" " +
                             "usageType=\"predicted\"/>\n");
-                    builder.append("</MiningSchema>\n");
+                        builder.append("</MiningSchema>\n");
 
-                    // RegressionModel::RegressionTable
-                    builder.append("<RegressionTable intercept=\"" + coeffs[coeffs.length - 1] + "\">\n");
-                    for (int k = 0; k <= data.numAttributes() - 2; k++) {
-                        builder.append("<NumericPredictor name=\"" +
+                        // RegressionModel::RegressionTable
+                        builder.append("<RegressionTable intercept=\"" + coeffs[coeffs.length - 1] + "\">\n");
+                        for (int k = 0; k <= data.numAttributes() - 2; k++) {
+                            builder.append("<NumericPredictor name=\"" +
                                 data.attribute(k).name() + "\" " +
                                 " exponent=\"1\" " +
                                 "coefficient=\"" + coeffs[k] + "\"/>\n");
-                    }
-                    builder.append("</RegressionTable>\n");
+                        }
+                            builder.append("</RegressionTable>\n");
 
-                    builder.append("</RegressionModel>\n");
-                    builder.append("</PMML>\n\n");
+                            builder.append("</RegressionModel>\n");
+                        builder.append("</PMML>\n\n");
+                        //end of PMML element
+                    builder.append("</ot:Model>\n");
                     //!! Now store the PMML representation in a file:
-                    FileWriter fileStream = new FileWriter(REG_MLR_modelsDir + "/" + modelPrefix + dataid);
+                    FileWriter fileStream = new FileWriter(modelsXmlDir + "/" + model_id + ".xml");
                     BufferedWriter output = new BufferedWriter(fileStream);
                     output.write(builder.toString());
                     output.flush();
                     output.close();
 
-                    getResponse().setEntity(baseURI + "/model/regression/mlr/" + modelPrefix + dataid+"\n", MediaType.TEXT_PLAIN);
+                    getResponse().setEntity(baseURI + "/model/" + modelPrefix + dataid+"\n", MediaType.TEXT_PLAIN);
                     if (getResponse().getStatus().equals(Status.SUCCESS_ACCEPTED)) {
                         getResponse().setStatus(Status.SUCCESS_OK);
                     }
@@ -714,14 +725,14 @@ public class Regression extends AbstractResource {
                      */
                     if (getResponse().getStatus().equals(Status.SUCCESS_OK)) {
                         String model_id = modelPrefix + dataid + "-" + NSVM;
-                        getResponse().setEntity(SvmModelURI + "/"+ model_id+"\n", MediaType.TEXT_PLAIN);
+                        getResponse().setEntity(ModelURI + "/"+ model_id+"\n", MediaType.TEXT_PLAIN);
 
                        StringBuilder xmlstr = new StringBuilder();
                        xmlstr.append(xmlIntro);
                        xmlstr.append("<ot:Model xmlns:ot=\"http://opentox.org/1.0/\" " +
                                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
                                "xsi:schemaLocation=\"http://opentox.org/1.0/Algorithm.xsd\" " +
-                               "ID=\""+model_id+"\" Name=\"Svm Classification Model\">\n");
+                               "ID=\""+model_id+"\" Name=\"SVM Regression Model\">\n");
                            xmlstr.append("<ot:link href=\"" + SvmModelURI + "/" + model_id +  "\" />\n");
                            xmlstr.append("<ot:AlgorithmID href=\"" + SvmAlgorithmURI +  "\"/>\n");
                            xmlstr.append("<DatasetID href=\"\"/>\n");
@@ -742,7 +753,7 @@ public class Regression extends AbstractResource {
                        xmlstr.append("</ot:Model>\n");
                        try{
 
-                           FileWriter fstream = new FileWriter(REG_SVM_modelsDir + "/xml/" + model_id + ".xml" );
+                           FileWriter fstream = new FileWriter(modelsXmlDir + "/" + model_id + ".xml" );
                            BufferedWriter out = new BufferedWriter(fstream);
                            out.write(xmlstr.toString());
                            out.flush();

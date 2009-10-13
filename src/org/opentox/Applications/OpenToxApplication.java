@@ -226,8 +226,8 @@ import org.restlet.data.Request;
          router.attach("/validation/test_set_validation/{algorithm_id}",TestSetValidation.class);
          router.attach("/validation_result/{model_type}/{algorithm_id}/{id}", ValidationResult.class);// e.g. /validation_result/classification/svc/validation-36-28-15
          router.attach("/model",ListAllModels.class);
-         router.attach("/model/{model_type}/{algorithm_id}",ListSomeModels.class);
-         router.attach("/model/{model_type}/{algorithm_id}/{model_id}", ModelGuard);// The deletion of models is guarded!!!
+         //router.attach("/model/{model_type}/{algorithm_id}",ListSomeModels.class);
+         router.attach("/model/{model_id}", ModelGuard);// The deletion of models is guarded!!!
          router.attach("/dataset",ListDataSets.class);// {type} stands for the dataset mediatype
          router.attach("/dataset/{id}",DataSetGuard);// The deletion of datasets is guarded!!!
                   

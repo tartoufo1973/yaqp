@@ -130,6 +130,14 @@ public abstract class AbstractResource  extends Resource{
     private static final String
                   modelsDir=baseDir+"/models";
 
+
+    /**
+     * Repository for xml representations of models
+     *
+     */
+    public static final String
+            modelsXmlDir = modelsDir + "/xml";
+
     /**
      * Repository for classification models.
      */
@@ -202,6 +210,9 @@ public abstract class AbstractResource  extends Resource{
     public static String
                 baseURI="http://opentox.ntua.gr:"+port+"/OpenToxServices";
 
+    public static final String
+            ModelURI = baseURI + "/model";
+
     private static String
             ClassificationModelURI = baseURI+"/model/classification";
 
@@ -232,6 +243,9 @@ public abstract class AbstractResource  extends Resource{
 
     public static String
             SvmAlgorithmURI = LearningAlgorithmURI + "/regression/svm";
+
+    public static String
+            MlrAlgorithmURI = LearningAlgorithmURI + "/regression/mlr";
     /**
      * Server IP.
      */

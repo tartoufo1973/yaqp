@@ -618,14 +618,14 @@ public class Classification extends AbstractResource{
                      */
                     if (getResponse().getStatus().equals(Status.SUCCESS_OK)){
                     String model_id = modelPrefix+dataid+"-"+NSVM;
-                    getResponse().setEntity(SvcModelURI + "/" + model_id+"\n\n", MediaType.TEXT_PLAIN);
+                    getResponse().setEntity(ModelURI + "/" + model_id+"\n\n", MediaType.TEXT_PLAIN);
                     // TODO : create and store xml
                        StringBuilder xmlstr = new StringBuilder();
                        xmlstr.append(xmlIntro);
                        xmlstr.append("<ot:Model xmlns:ot=\"http://opentox.org/1.0/\" " +
                                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
                                "xsi:schemaLocation=\"http://opentox.org/1.0/Algorithm.xsd\" " +
-                               "ID=\""+model_id+"\" Name=\"Svm Classification Model\">\n");
+                               "ID=\""+model_id+"\" Name=\"SVM Classification Model\">\n");
                            xmlstr.append("<ot:link href=\"" + SvcModelURI + "/" + model_id +  "\" />\n");
                            xmlstr.append("<ot:AlgorithmID href=\"" + SvcAlgorithmURI +  "\"/>\n");
                            xmlstr.append("<DatasetID href=\"\"/>\n");
@@ -645,7 +645,7 @@ public class Classification extends AbstractResource{
                        xmlstr.append("</ot:Model>\n");
                        try{
 
-                           FileWriter fstream = new FileWriter(CLS_SVM_modelsDir + "/xml/" + model_id + ".xml" );
+                           FileWriter fstream = new FileWriter(modelsXmlDir + "/" + model_id + ".xml" );
                            BufferedWriter out = new BufferedWriter(fstream);
                            out.write(xmlstr.toString());
                            out.flush();
